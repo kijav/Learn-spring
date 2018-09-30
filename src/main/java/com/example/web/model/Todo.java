@@ -1,8 +1,6 @@
 package com.example.web.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.Objects;
@@ -12,15 +10,20 @@ public class Todo {
 
     @Id
     @GeneratedValue
+    @Column(name ="id")
     private int id;
 
+    @Column(name = "user")
     private String user;
 
+    @Column (name = "desc")
     @Size(min = 10, message = "enter at least 10 character")
     private String desc;
 
+    @Column(name = "target_date")
     private Date targetDate;
 
+    @Column(name = "is_done")
     private boolean isDone;
 
     public Todo(){
