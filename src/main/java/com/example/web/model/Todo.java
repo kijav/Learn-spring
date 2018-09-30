@@ -1,15 +1,26 @@
 package com.example.web.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.Objects;
 
+@Entity
 public class Todo {
+
+    @Id
+    @GeneratedValue
     private int id;
+
     private String user;
+
     @Size(min = 10, message = "enter at least 10 character")
     private String desc;
+
     private Date targetDate;
+
     private boolean isDone;
 
     public Todo(){

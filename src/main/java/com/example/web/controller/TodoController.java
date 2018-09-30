@@ -1,6 +1,7 @@
 package com.example.web.controller;
 
 import com.example.web.model.Todo;
+import com.example.web.service.TodoRepository;
 import com.example.web.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -16,17 +17,22 @@ import javax.validation.Valid;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 
 @Controller
 public class TodoController {
 
+//    @Autowired
+//    TodoService service;
+
     @Autowired
-    TodoService service;
+    TodoRepository repository;
 
     @RequestMapping(value= "/list-todos", method = RequestMethod.GET)
     public String showTodos(ModelMap model){
         String name = getLoggedInUserName(model);
-        model.put("todos", service.retrieveTodos(name));
+        model.put("todos", repository.findByUser(name));
+//        model.put("todos", service.retrieveTodos(name));
         return "list-todos";
     }
 
@@ -53,7 +59,10 @@ public class TodoController {
             return "todo";
         }
 
-        service.addTodo(getLoggedInUserName(model), todo.getDesc(), new Date(),false);
+        todo.setUser(getLoggedInUserName(model));
+        repository.save(todo);
+
+//        service.addTodo(getLoggedInUserName(model), todo.getDesc(), new Date(),false);
         return "redirect:/list-todos";
     }
 
@@ -63,14 +72,15 @@ public class TodoController {
 //        if(id==1){
 //            throw new RuntimeException("Something went error");
 //        }
-
-        service.deleteTodo(id);
+        repository.deleteById(id);
+//        service.deleteTodo(id);
         return "redirect:/list-todos";
     }
 
     @RequestMapping(value = "/update-todo", method = RequestMethod.GET)
     public String showUpdateTodoPage(@RequestParam int id, ModelMap model) {
-        Todo todo = service.retrieveTodo(id);
+        Todo todo = repository.findById(id).get();
+//        Todo todo = service.retrieveTodo(id);
         model.put("todo", todo);
         return "todo";
     }
@@ -82,7 +92,8 @@ public class TodoController {
             return "todo";
         }
         todo.setUser(getLoggedInUserName(model));
-        service.updateTodo(todo);
+        repository.save(todo);
+//        service.updateTodo(todo);
         return "redirect:/list-todos";
     }
 
