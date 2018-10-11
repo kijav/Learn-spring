@@ -15,13 +15,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configureGlobalSecurity(AuthenticationManagerBuilder auth)
             throws Exception {
         auth.inMemoryAuthentication()
-                .withUser("lolol").password("{noop}mimin").roles("USER", "ADMIN");
+                .withUser("lolol").password("{noop}mimin").roles("USER", "ADMIN").and()
+                .withUser("user").password("{noop}momod").roles("USER");
+
+
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/login", "/h2-console/**").permitAll()
-                .antMatchers("/", "/*todo*/**").access("hasRole('USER')").and()
+        http.authorizeRequests().antMatchers("/login").permitAll()
+                .antMatchers("/*h2-console*/**").access("hasRole('ADMIN')")
+                .antMatchers("/", "/*todo*/**").access("hasRole('USER') or hasRole('ADMIN')").and()
                 .formLogin();
 
         http.csrf().disable();
